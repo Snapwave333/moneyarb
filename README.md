@@ -1,256 +1,520 @@
-# Statistical Arbitrage (Pairs Trading) Bot
+<div align="center">
 
-A comprehensive Python-based system for discovering cointegrated stock pairs, monitoring their price spreads, and executing mean-reversion trades automatically.
+# 📈 MoneyArb - Pairs Trading Bot
 
-## Overview
+<img src="https://img.shields.io/badge/Statistical-Arbitrage-blue?style=for-the-badge&logo=bitcoin&logoColor=white" alt="Statistical Arbitrage"/>
 
-This bot implements a classic quantitative trading strategy known as **pairs trading** or **statistical arbitrage**. The core concept:
+### 🎯 *Find the Edge. Trade the Spread. Profit from Mean Reversion.*
 
-1. **Find correlated pairs**: Identify two stocks that historically move together (e.g., Coke & Pepsi, JPM & BAC)
-2. **Monitor the spread**: Track when their price relationship temporarily breaks down
-3. **Trade the reversion**: When the spread widens beyond normal, bet it will revert to the mean
+[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![NumPy](https://img.shields.io/badge/NumPy-Scientific-013243?style=flat-square&logo=numpy&logoColor=white)](https://numpy.org)
+[![Pandas](https://img.shields.io/badge/Pandas-Data-150458?style=flat-square&logo=pandas&logoColor=white)](https://pandas.pydata.org)
+[![scikit-learn](https://img.shields.io/badge/Statsmodels-Statistics-F7931E?style=flat-square&logo=scipy&logoColor=white)](https://www.statsmodels.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Code Style](https://img.shields.io/badge/Code%20Style-Black-000000?style=flat-square)](https://black.readthedocs.io)
 
-## Features
+---
 
-- **Cointegration Scanner**: Uses Engle-Granger test to find mathematically cointegrated pairs
-- **Real-time Monitoring**: Tracks z-scores and generates entry/exit signals
-- **Automated Execution**: Paper trading with broker API integration ready
-- **Backtesting Framework**: Test strategies on historical data with realistic costs
-- **Risk Management**: Drawdown limits, position sizing, and stop losses
-- **Database Storage**: SQLite for pairs, trades, and performance metrics
-- **CLI Interface**: Easy-to-use command-line tools
+**A sophisticated quantitative trading system that discovers cointegrated stock pairs,**
+**monitors their price spreads in real-time, and executes automated mean-reversion trades.**
 
-## Installation
+[🚀 Quick Start](#-quick-start) •
+[📖 Documentation](#-how-it-works) •
+[⚙️ Configuration](#%EF%B8%8F-configuration) •
+[📊 Backtesting](#-backtesting) •
+[🛡️ Risk Management](#%EF%B8%8F-risk-management)
+
+</div>
+
+---
+
+## 🌟 What is Pairs Trading?
+
+<table>
+<tr>
+<td width="50%">
+
+### The Concept
+Pairs trading is a **market-neutral** strategy that profits from the relative price movements of two correlated securities—**not** from market direction.
+
+> *"You're not betting on the market. You're betting on the relationship."*
+
+</td>
+<td width="50%">
+
+### The Edge
+When two historically correlated stocks (like **JPM & BAC** or **Coke & Pepsi**) temporarily diverge, the strategy bets they'll **revert to their mean relationship**.
+
+</td>
+</tr>
+</table>
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     PAIRS TRADING FLOW                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  📊 SCAN          🔍 MONITOR         ⚡ EXECUTE            │
+│  ─────────        ──────────         ─────────             │
+│  Find pairs   →   Track spread   →   Trade signal          │
+│  that move        & calculate        when spread           │
+│  together         z-score            diverges              │
+│                                                             │
+│  ┌─────┐         ┌─────────┐        ┌──────────┐          │
+│  │ JPM │ ≈≈≈≈≈≈  │ Z > +2σ │   →    │ SHORT    │          │
+│  │ BAC │         │ Z < -2σ │   →    │ LONG     │          │
+│  └─────┘         └─────────┘        └──────────┘          │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+### 🔬 **Statistical Scanner**
+Uses **Engle-Granger cointegration test** to mathematically identify pairs with mean-reverting spreads
+
+</td>
+<td align="center" width="33%">
+
+### 📡 **Real-Time Monitor**
+Tracks z-scores and generates **automated entry/exit signals** based on statistical thresholds
+
+</td>
+<td align="center" width="33%">
+
+### 🤖 **Auto Execution**
+Paper trading engine with **position management** and broker API integration ready
+
+</td>
+</tr>
+<tr>
+<td align="center">
+
+### 📈 **Backtesting**
+Test strategies on **historical data** with transaction costs, slippage, and performance metrics
+
+</td>
+<td align="center">
+
+### 🛡️ **Risk Management**
+Built-in **drawdown limits**, position sizing, stop losses, and Kelly criterion
+
+</td>
+<td align="center">
+
+### 💾 **Data Pipeline**
+**SQLite database** for pairs, trades, and performance with caching system
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Quick Start
+
+### 📦 Installation
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/yourusername/moneyarb.git
 cd moneyarb
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-## Quick Start
-
-### 1. Scan for Cointegrated Pairs
+### ⚡ 5-Minute Demo
 
 ```bash
-# Scan default universe (60 liquid stocks)
-python main.py scan
+# 1️⃣ Discover cointegrated pairs
+python main.py scan --sectors finance
 
-# Scan specific sectors
-python main.py scan --sectors technology --sectors finance
+# 2️⃣ Test a specific pair
+python main.py test-pair JPM BAC
 
-# Scan specific symbols
-python main.py scan -s AAPL -s MSFT -s GOOGL -s META
-```
+# 3️⃣ Run historical backtest
+python main.py backtest --pairs 10
 
-### 2. Test a Specific Pair
-
-```bash
-# Test if two stocks are cointegrated
-python main.py test-pair AAPL MSFT
-```
-
-### 3. Backtest Strategy
-
-```bash
-# Run backtest on top pairs over last 2 years
-python main.py backtest
-
-# Custom date range
-python main.py backtest --start 2022-01-01 --end 2024-01-01
-
-# Test more pairs
-python main.py backtest --pairs 20
-```
-
-### 4. Paper Trading
-
-```bash
-# Run paper trading for 1 hour
+# 4️⃣ Start paper trading
 python main.py paper --duration 1.0
 
-# Run for 8 hours (full trading day)
-python main.py paper --duration 8.0
-```
-
-### 5. Check Status
-
-```bash
-# View current status
+# 5️⃣ Check your status
 python main.py status
-
-# View trade history
-python main.py history --limit 50
 ```
 
-## Architecture
+---
+
+## 🎯 CLI Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `scan` | 🔍 Discover cointegrated pairs | `python main.py scan --sectors technology` |
+| `test-pair` | 🧪 Test specific pair | `python main.py test-pair AAPL MSFT` |
+| `backtest` | 📊 Historical simulation | `python main.py backtest --start 2022-01-01` |
+| `paper` | 📝 Paper trading mode | `python main.py paper --duration 8.0` |
+| `run` | 🚀 Live trading bot | `python main.py run` |
+| `status` | 📈 Current portfolio status | `python main.py status` |
+| `history` | 📜 Trade history | `python main.py history --limit 50` |
+| `revalidate` | 🔄 Re-check pair validity | `python main.py revalidate` |
+
+---
+
+## 🏗️ Architecture
 
 ```
-pairs_trading/
-├── scanner/           # Cointegration pair discovery
-│   └── cointegration.py
-├── monitor/           # Real-time spread monitoring
-│   └── spread_monitor.py
-├── executor/          # Trade execution engine
-│   ├── trade_executor.py
-│   └── risk_manager.py
-├── backtest/          # Historical backtesting
-│   └── backtester.py
-├── data/              # Data management
-│   ├── fetcher.py     # Market data fetching
-│   └── database.py    # SQLite storage
-├── utils/             # Utilities
-│   ├── config.py      # Configuration management
-│   └── logger.py      # Logging setup
-└── bot.py             # Main orchestrator
+moneyarb/
+│
+├── 🧠 pairs_trading/              # Core trading engine
+│   │
+│   ├── 🔬 scanner/                # Pair discovery
+│   │   └── cointegration.py      # Engle-Granger tests
+│   │
+│   ├── 📡 monitor/                # Real-time tracking
+│   │   └── spread_monitor.py     # Z-score calculations
+│   │
+│   ├── ⚡ executor/               # Trade execution
+│   │   ├── trade_executor.py     # Order management
+│   │   └── risk_manager.py       # Risk controls
+│   │
+│   ├── 📊 backtest/               # Historical testing
+│   │   └── backtester.py         # Strategy simulation
+│   │
+│   ├── 💾 data/                   # Data management
+│   │   ├── fetcher.py            # Market data API
+│   │   └── database.py           # SQLite storage
+│   │
+│   ├── 🔧 utils/                  # Utilities
+│   │   ├── config.py             # Configuration
+│   │   └── logger.py             # Logging system
+│   │
+│   └── 🤖 bot.py                  # Main orchestrator
+│
+├── ⚙️ config/                     # Configuration files
+│   └── settings.yaml             # Strategy parameters
+│
+├── 🧪 tests/                      # Test suite
+├── 📜 scripts/                    # Utility scripts
+└── 🚀 main.py                     # CLI entry point
 ```
 
-## Configuration
+---
 
-Edit `config/settings.yaml` to customize:
+## 📖 How It Works
 
-```yaml
-# Scanner settings
-scanner:
-  significance_level: 0.05
-  min_correlation: 0.7
-  max_pvalue: 0.05
-  max_pairs: 50
+### 1️⃣ Cointegration Testing
 
-# Monitor settings
-monitor:
-  entry_threshold: 2.0      # Z-score to enter trade
-  exit_threshold: 0.5       # Z-score to exit trade
-  stop_loss_threshold: 4.0  # Stop loss z-score
-
-# Risk management
-risk:
-  max_drawdown_pct: 0.15
-  daily_loss_limit: 0.03
-  max_pair_loss_pct: 0.02
-```
-
-## How It Works
-
-### 1. Cointegration Testing
+<table>
+<tr>
+<td width="60%">
 
 The scanner uses the **Engle-Granger two-step method**:
-- Tests if two price series are cointegrated (move together long-term)
-- Calculates the optimal **hedge ratio** (β) for the spread
-- Verifies the spread is **stationary** using the ADF test
-- Estimates **half-life** of mean reversion
 
-### 2. Z-Score Calculation
+1. **Correlation Check** - Filter pairs with correlation > 0.7
+2. **Cointegration Test** - Verify long-term equilibrium exists
+3. **ADF Test** - Confirm spread is stationary
+4. **Half-Life Calculation** - Estimate mean reversion speed
+5. **Hedge Ratio** - Optimal position sizing ratio
 
+</td>
+<td width="40%">
+
+```python
+# Statistical Tests
+✓ Correlation > 0.70
+✓ Coint P-Value < 0.05
+✓ ADF P-Value < 0.05
+✓ Half-Life: 1-120 days
+```
+
+</td>
+</tr>
+</table>
+
+### 2️⃣ Z-Score Signal Generation
+
+```
+                    TRADING SIGNALS
+    ═══════════════════════════════════════════
+
+         +4σ  ────────── STOP LOSS ──────────
+
+         +2σ  ════════ SHORT SPREAD ════════  ← ENTRY
+
+         +0.5σ -------- EXIT SHORT --------   ← EXIT
+
+          0   ═══════════ MEAN ═══════════
+
+         -0.5σ -------- EXIT LONG ---------   ← EXIT
+
+         -2σ  ════════ LONG SPREAD ═════════  ← ENTRY
+
+         -4σ  ────────── STOP LOSS ──────────
+```
+
+### 3️⃣ Mathematical Foundation
+
+<table>
+<tr>
+<td>
+
+**Spread Calculation:**
 ```
 Spread = Price₁ - β × Price₂
-Z-Score = (Current Spread - Mean) / Std
 ```
 
-### 3. Trading Logic
-
-- **Entry Signal**: Z-score crosses ±2.0 standard deviations
-  - Negative z-score → Long spread (buy stock1, sell stock2)
-  - Positive z-score → Short spread (sell stock1, buy stock2)
-- **Exit Signal**: Z-score returns to ±0.5 (mean reversion)
-- **Stop Loss**: Z-score exceeds ±4.0
-
-### 4. Example Trade
-
+**Z-Score:**
 ```
-Pair: AAPL-MSFT
-Hedge Ratio: 0.85
-Mean Spread: $15.00
-Std Spread: $2.50
-
-Current: AAPL=$150, MSFT=$158
-Current Spread = $150 - 0.85×$158 = $15.70
-Z-Score = ($15.70 - $15.00) / $2.50 = 0.28
-
-No signal (z-score within normal range)
-
-Later: AAPL=$155, MSFT=$160
-Current Spread = $155 - 0.85×$160 = $19.00
-Z-Score = ($19.00 - $15.00) / $2.50 = 1.60
-
-Still no signal...
-
-Later: AAPL=$160, MSFT=$161
-Current Spread = $160 - 0.85×$161 = $23.15
-Z-Score = ($23.15 - $15.00) / $2.50 = 3.26
-
-Signal: SHORT SPREAD (sell AAPL, buy MSFT)
-Expecting spread to decrease back toward $15.00
+Z = (Current Spread - μ) / σ
 ```
 
-## Performance Metrics
+**Half-Life:**
+```
+τ = -ln(2) / λ
+```
 
-The backtester calculates:
-- **Total Return**: Absolute and percentage
-- **Annualized Return**: Compounded annual growth rate
-- **Sharpe Ratio**: Risk-adjusted return (>1.0 is good)
-- **Maximum Drawdown**: Largest peak-to-trough decline
-- **Win Rate**: Percentage of profitable trades
-- **Profit Factor**: Gross profit / Gross loss
-- **Average Holding Period**: Days per trade
+</td>
+<td>
 
-## API Integration
+**Trading Rules:**
+- **LONG** when Z < -2.0
+- **SHORT** when Z > +2.0
+- **EXIT** when |Z| < 0.5
+- **STOP LOSS** when |Z| > 4.0
 
-For live trading, configure broker credentials in `.env`:
+</td>
+</tr>
+</table>
+
+---
+
+## 📊 Backtesting
+
+### Performance Metrics
+
+| Metric | Description | Target |
+|--------|-------------|--------|
+| 📈 **Total Return** | Absolute profit/loss | > 0 |
+| 📊 **Annualized Return** | Yearly CAGR | > 10% |
+| ⚖️ **Sharpe Ratio** | Risk-adjusted return | > 1.0 |
+| 📉 **Max Drawdown** | Largest peak-to-trough | < 15% |
+| 🎯 **Win Rate** | Profitable trades % | > 55% |
+| 💰 **Profit Factor** | Gross profit / loss | > 1.5 |
+| ⏱️ **Avg Holding Period** | Days per trade | 5-30 |
+
+### Example Backtest Output
+
+```
+══════════════════════════════════════════════════
+                 BACKTEST RESULTS
+══════════════════════════════════════════════════
+
+Performance Metrics:
+  Total Return:        $12,450.00 (12.45%)
+  Annual Return:       8.23%
+  Sharpe Ratio:        1.45
+  Max Drawdown:        7.82%
+
+Trade Statistics:
+  Total Trades:        156
+  Win Rate:            62.18%
+  Profit Factor:       1.89
+  Avg Trade Return:    $79.81
+  Avg Holding Period:  8.3 days
+  Best Trade:          $892.00
+  Worst Trade:         -$445.00
+
+══════════════════════════════════════════════════
+```
+
+---
+
+## ⚙️ Configuration
+
+Edit `config/settings.yaml`:
+
+```yaml
+# 🔬 Scanner Parameters
+scanner:
+  significance_level: 0.05      # Statistical confidence
+  min_correlation: 0.7          # Minimum pair correlation
+  max_pvalue: 0.05              # Cointegration threshold
+  max_pairs: 50                 # Maximum pairs to track
+
+# 📡 Monitor Settings
+monitor:
+  entry_threshold: 2.0          # Z-score entry (±2σ)
+  exit_threshold: 0.5           # Z-score exit (±0.5σ)
+  stop_loss_threshold: 4.0      # Stop loss (±4σ)
+  update_interval: 60           # Seconds between updates
+
+# 🛡️ Risk Management
+risk:
+  max_drawdown_pct: 0.15        # 15% max drawdown
+  daily_loss_limit: 0.03        # 3% daily loss limit
+  max_pair_loss_pct: 0.02       # 2% per-pair loss limit
+
+# 💰 Execution
+executor:
+  position_size_pct: 0.05       # 5% of portfolio per trade
+  max_positions: 10             # Maximum concurrent positions
+  paper_capital: 100000.0       # Starting capital
+```
+
+---
+
+## 🛡️ Risk Management
+
+<table>
+<tr>
+<td width="50%">
+
+### Built-in Safeguards
+
+- ✅ **Maximum Drawdown Limit** (15%)
+- ✅ **Daily Loss Circuit Breaker** (3%)
+- ✅ **Per-Position Loss Limit** (2%)
+- ✅ **Maximum Holding Period** (30 days)
+- ✅ **Position Size Limits** (5% per trade)
+- ✅ **Stop-Loss on Z-Score** (±4σ)
+
+</td>
+<td width="50%">
+
+### Risk Metrics Dashboard
+
+```
+═══════════════════════════════
+       RISK STATUS
+═══════════════════════════════
+Current Equity: $104,250.00
+Peak Equity:    $105,000.00
+Current DD:     0.71%
+Daily PnL:      +$450.00
+Trading Status: ✅ ACTIVE
+═══════════════════════════════
+```
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🔌 API Integration
+
+### Supported Data Sources
+
+| Provider | Status | Features |
+|----------|--------|----------|
+| 📊 **Yahoo Finance** | ✅ Active | Free historical data |
+| 🦙 **Alpaca** | 🔧 Ready | Paper + Live trading |
+| 🏦 **Interactive Brokers** | 📋 Planned | Professional execution |
+
+### Environment Setup
 
 ```bash
-ALPACA_API_KEY=your_key_here
-ALPACA_SECRET_KEY=your_secret_here
+# .env file
+ALPACA_API_KEY=your_api_key_here
+ALPACA_SECRET_KEY=your_secret_key_here
 ```
 
-Supported brokers (implementations ready for extension):
-- Paper Trading (default)
-- Alpaca (planned)
-- Interactive Brokers (planned)
+---
 
-## Risk Warnings
+## ⚠️ Important Disclaimers
 
-**IMPORTANT**: This is a sophisticated trading system with significant risks:
+<table>
+<tr>
+<td>
 
-1. **Statistical arbitrage is not risk-free** - Cointegration can break down
-2. **Past performance doesn't guarantee future results**
-3. **Paper trade extensively** before considering real money
-4. **Understand the mathematics** before deploying
-5. **Market conditions change** - Regular revalidation is essential
+### 🚨 Risk Warnings
 
-## Development
+1. **NOT FINANCIAL ADVICE** - This is educational software
+2. **NO GUARANTEE** - Past performance ≠ future results
+3. **CAPITAL AT RISK** - You can lose money
+4. **PAPER TRADE FIRST** - Test extensively before live trading
+5. **UNDERSTAND THE MATH** - Know what you're trading
+
+</td>
+<td>
+
+### 📚 Prerequisites
+
+- Understanding of statistics
+- Knowledge of financial markets
+- Risk management principles
+- Python programming basics
+- Patience and discipline
+
+</td>
+</tr>
+</table>
+
+> **⚡ Pro Tip:** Cointegration can break down. Always revalidate pairs regularly and never risk more than you can afford to lose.
+
+---
+
+## 🧪 Development
 
 ```bash
-# Run tests
-pytest tests/
+# Run test suite
+pytest tests/ -v
 
-# Format code
+# Code formatting
 black pairs_trading/
 
 # Type checking
 mypy pairs_trading/
+
+# Quick demo
+python scripts/quick_demo.py
 ```
 
-## Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Submit a pull request
+## 🤝 Contributing
 
-## License
+We welcome contributions! Here's how:
 
-MIT License - See LICENSE file for details.
+1. 🍴 **Fork** the repository
+2. 🌿 **Create** a feature branch (`git checkout -b feature/amazing`)
+3. 💻 **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. 📤 **Push** to branch (`git push origin feature/amazing`)
+5. 🎉 **Open** a Pull Request
 
-## Acknowledgments
+---
 
-- Engle-Granger cointegration test (statsmodels)
-- Yahoo Finance API (yfinance)
-- Inspired by Ernest Chan's quantitative trading books
+## 📜 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- 📚 **Ernest P. Chan** - Quantitative trading methodologies
+- 📊 **Statsmodels** - Statistical testing framework
+- 💹 **yfinance** - Market data API
+- 🐍 **Python Scientific Stack** - NumPy, Pandas, SciPy
+
+---
+
+<div align="center">
+
+### ⭐ Star this repo if you find it useful!
+
+**Built with ❤️ for quantitative traders**
+
+[![Made with Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg?style=for-the-badge&logo=python)](https://www.python.org/)
+
+</div>
