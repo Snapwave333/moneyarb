@@ -1,0 +1,115 @@
+# Pairs Trading Bot Configuration
+
+# Data Settings
+data:
+  # Historical data period for analysis
+  lookback_days: 252  # 1 year of trading days
+  # Minimum data points required
+  min_data_points: 200
+  # Data source (yfinance, alpaca)
+  source: "yfinance"
+  # Cache directory
+  cache_dir: "data/cache"
+
+# Scanner Settings
+scanner:
+  # Cointegration test significance level
+  significance_level: 0.05
+  # Minimum correlation threshold
+  min_correlation: 0.7
+  # Maximum p-value for cointegration
+  max_pvalue: 0.05
+  # Sectors to scan (empty means all)
+  sectors: []
+  # Universe of stocks (leave empty to use default S&P 500)
+  universe: []
+  # Maximum pairs to track
+  max_pairs: 50
+
+# Monitor Settings
+monitor:
+  # Z-score entry threshold (standard deviations)
+  entry_threshold: 2.0
+  # Z-score exit threshold
+  exit_threshold: 0.5
+  # Stop loss threshold (z-score)
+  stop_loss_threshold: 4.0
+  # Update interval in seconds
+  update_interval: 60
+  # Rolling window for spread calculation
+  spread_window: 60
+  # Enable alerts
+  enable_alerts: true
+
+# Execution Settings
+executor:
+  # Broker API (alpaca, interactive_brokers, paper)
+  broker: "paper"
+  # Position sizing method (fixed, percent, kelly)
+  position_sizing: "percent"
+  # Percentage of portfolio per trade
+  position_size_pct: 0.05
+  # Maximum positions
+  max_positions: 10
+  # Enable live trading
+  live_trading: false
+  # Paper trading initial capital
+  paper_capital: 100000.0
+
+# Risk Management
+risk:
+  # Maximum portfolio drawdown percentage
+  max_drawdown_pct: 0.15
+  # Maximum single pair loss
+  max_pair_loss_pct: 0.02
+  # Daily loss limit
+  daily_loss_limit: 0.03
+  # Maximum correlation between active pairs
+  max_pair_correlation: 0.5
+  # Minimum holding period (days)
+  min_holding_period: 1
+  # Maximum holding period (days)
+  max_holding_period: 30
+
+# Backtesting Settings
+backtest:
+  # Start date (YYYY-MM-DD or relative like -2y)
+  start_date: "-2y"
+  # End date (YYYY-MM-DD or today)
+  end_date: "today"
+  # Transaction costs (percentage)
+  transaction_cost: 0.001
+  # Slippage (percentage)
+  slippage: 0.0005
+  # Initial capital
+  initial_capital: 100000.0
+  # Benchmark symbol
+  benchmark: "SPY"
+
+# Logging Settings
+logging:
+  # Log level (DEBUG, INFO, WARNING, ERROR)
+  level: "INFO"
+  # Log file path
+  file: "logs/pairs_trading.log"
+  # Console output
+  console: true
+  # Maximum log file size (MB)
+  max_size: 100
+  # Number of backup files
+  backup_count: 5
+
+# Database Settings
+database:
+  # Database type (sqlite, postgresql)
+  type: "sqlite"
+  # Database path (for sqlite)
+  path: "data/pairs_trading.db"
+  # Connection string (for postgresql)
+  connection_string: ""
+
+# API Keys (use environment variables in production)
+api_keys:
+  alpaca_key: "${ALPACA_API_KEY}"
+  alpaca_secret: "${ALPACA_SECRET_KEY}"
+  alpaca_base_url: "https://paper-api.alpaca.markets"
